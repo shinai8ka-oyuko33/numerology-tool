@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  深愛八華｜数秘自動計算ツール
+  パーソナルイヤー・マンス・デイナンバー 計算ページ
+
+  ▼このファイルはFC2など外部サーバーに「そのまま」アップロードして
+    使う、完全独立型の1ページです。
+  ▼WordPressからは <iframe> タグでこのページを埋め込んでください。
+    埋め込み方法はファイル末尾のコメント、または別途お渡しする
+    案内をご覧ください。
+============================================================ -->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数秘自動計算ツール｜深愛八華</title>
+<style>
+/* ページ全体の基本設定（外部サーバーの独自ページ用） */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #060f24;
+}
+/* ============================================================
+   ▼デザインを変更したい場合はここ（CSS）を編集してください
+   主な配色：ネイビー・ゴールド・白・淡い水色
+============================================================ */
+.numerology-tool {
+  --navy: #0b1a3a;
+  --navy-deep: #060f24;
+  --gold: #d4af6a;
+  --gold-light: #f0d9a8;
+  --white: #ffffff;
+  --pale-blue: #a9c9e0;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-bg-light: rgba(255, 255, 255, 0.92);
+
+  font-family: "Shippori Mincho", "Noto Serif JP", "游明朝", "Yu Mincho", serif;
+  max-width: 720px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  color: var(--white);
+  background: radial-gradient(ellipse at top, #142a52 0%, var(--navy) 40%, var(--navy-deep) 100%);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.numerology-tool * {
+  box-sizing: border-box;
+}
+
+/* 背景の星 */
+.numerology-tool::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 90px 80px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 160px 50px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 220px 120px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 280px 30px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 40px 160px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 320px 180px, rgba(255,255,255,0.5), transparent);
+  background-repeat: repeat;
+  background-size: 360px 220px;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.numerology-tool .nt-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* タイトル */
+.numerology-tool .nt-title {
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+}
+
+.numerology-tool .nt-subtitle {
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--pale-blue);
+  margin-bottom: 28px;
+  opacity: 0.9;
+}
+
+/* 月の装飾 */
+.numerology-tool .nt-moon {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold) 60%, #b8924a 100%);
+  box-shadow: 0 0 24px rgba(212, 175, 106, 0.6);
+}
+
+/* 入力フォーム部分 */
+.numerology-tool .nt-form {
+  background: var(--card-bg);
+  border: 1px solid rgba(212, 175, 106, 0.3);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(6px);
+}
+
+.numerology-tool .nt-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.numerology-tool .nt-field {
+  flex: 1;
+  min-width: 90px;
+}
+
+.numerology-tool .nt-field label {
+  display: block;
+  font-size: 12px;
+  color: var(--pale-blue);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+
+.numerology-tool select {
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 106, 0.4);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--navy-deep);
+  font-size: 15px;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--navy) 50%), linear-gradient(135deg, var(--navy) 50%, transparent 50%);
+  background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.numerology-tool .nt-section-label {
+  font-size: 12px;
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  margin: 18px 0 8px;
+  border-top: 1px dashed rgba(212, 175, 106, 0.3);
+  padding-top: 14px;
+}
+
+.numerology-tool .nt-form-row:first-of-type .nt-section-label {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* 計算ボタン */
+.numerology-tool .nt-button-wrap {
+  text-align: center;
+  margin-top: 22px;
+}
+
+.numerology-tool .nt-btn {
+  display: inline-block;
+  padding: 14px 42px;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  color: var(--navy-deep);
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(212, 175, 106, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.numerology-tool .nt-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(212, 175, 106, 0.5);
+}
+
+.numerology-tool .nt-btn:active {
+  transform: translateY(0);
+}
+
+/* 結果エリア全体 */
+.numerology-tool .nt-results {
+  display: none;
+}
+
+.numerology-tool .nt-results.is-visible {
+  display: block;
+}
+
+.numerology-tool .nt-result-block {
+  margin-bottom: 36px;
+}
+
+.numerology-tool .nt-result-heading {
+  text-align: center;
+  font-size: 16px;
+  color: var(--gold-light);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.numerology-tool .nt-result-heading::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 8px auto 0;
+  opacity: 0.6;
+}
+
+/* A. パーソナルイヤー：年スライド表示 */
+.numerology-tool .nt-year-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.numerology-tool .nt-year-chip {
+  flex: 0 0 auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 10px;
+  color: var(--pale-blue);
+  opacity: 0.75;
+}
+
+.numerology-tool .nt-year-chip .nt-chip-num {
+  font-size: 15px;
+  color: var(--white);
+  font-weight: 600;
+}
+
+.numerology-tool .nt-year-chip.nt-center {
+  width: 78px;
+  height: 78px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  border: none;
+  opacity: 1;
+  box-shadow: 0 0 24px rgba(212, 175, 106, 0.55);
+}
+
+.numerology-tool .nt-year-chip.nt-center .nt-chip-num {
+  color: var(--navy-deep);
+  font-size: 24px;
+}
+
+.numerology-tool .nt-year-chip.nt-center .nt-chip-year {
+  color: var(--navy-deep);
+  font-weight: 600;
+}
+
+/* B. パーソナルマンス：カード表示 */
+.numerology-tool .nt-month-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .numerology-tool .nt-month-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.numerology-tool .nt-month-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  text-align: center;
+  padding: 14px 4px;
+}
+
+.numerology-tool .nt-month-card .nt-month-label {
+  font-size: 12px;
+  color: var(--pale-blue);
+  margin-bottom: 6px;
+}
+
+.numerology-tool .nt-month-card .nt-month-num {
+  font-size: 22px;
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.numerology-tool .nt-month-card.nt-current {
+  background: linear-gradient(135deg, rgba(212,175,106,0.35), rgba(212,175,106,0.15));
+  border-color: var(--gold);
+}
+
+/* C. パーソナルデイ：単一の大きな結果カード */
+.numerology-tool .nt-day-result {
+  background: linear-gradient(135deg, rgba(212,175,106,0.25), rgba(255,255,255,0.06));
+  border: 1px solid rgba(212, 175, 106, 0.4);
+  border-radius: 16px;
+  text-align: center;
+  padding: 28px 16px;
+}
+
+.numerology-tool .nt-day-result .nt-day-date {
+  font-size: 13px;
+  color: var(--pale-blue);
+  margin-bottom: 10px;
+}
+
+.numerology-tool .nt-day-result .nt-day-num {
+  font-size: 40px;
+  color: var(--gold-light);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 数字の意味カード（共通） */
+.numerology-tool .nt-meaning-box {
+  background: var(--card-bg-light);
+  color: var(--navy-deep);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.numerology-tool .nt-meaning-box .nt-meaning-num {
+  display: inline-block;
+  color: var(--navy);
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+/* 数字の意味 一覧（参考表） */
+.numerology-tool .nt-meaning-list {
+  margin-top: 8px;
+}
+
+.numerology-tool .nt-meaning-list-title {
+  text-align: center;
+  font-size: 14px;
+  color: var(--gold-light);
+  letter-spacing: 0.08em;
+  margin: 36px 0 14px;
+}
+
+.numerology-tool .nt-meaning-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .numerology-tool .nt-meaning-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.numerology-tool .nt-meaning-item {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--white);
+  line-height: 1.6;
+}
+
+.numerology-tool .nt-meaning-item .nt-meaning-num {
+  color: var(--gold-light);
+}
+
+.numerology-tool .nt-meaning-item.nt-master .nt-meaning-num {
+  color: #f4c9c9;
+}
+</style>
+</head>
+<body>
+
+<div class="numerology-tool">
+  <div class="nt-inner">
+
+    <div class="nt-moon"></div>
+    <!-- ▼タイトル文言を変更したい場合はここ -->
+    <div class="nt-title">深愛八華 数秘自動計算ツール</div>
+    <div class="nt-subtitle">パーソナルイヤー・マンス・デイナンバー</div>
+
+    <!-- ============== 入力フォーム ============== -->
+    <div class="nt-form">
+
+      <div class="nt-form-row">
+        <div class="nt-field">
+          <label for="nt-birth-month">誕生月</label>
+          <select id="nt-birth-month"></select>
+        </div>
+        <div class="nt-field">
+          <label for="nt-birth-day">誕生日</label>
+          <select id="nt-birth-day"></select>
+        </div>
+      </div>
+
+      <div class="nt-section-label">調べたい年（イヤー・マンス共通）</div>
+      <div class="nt-form-row">
+        <div class="nt-field">
+          <label for="nt-target-year">年</label>
+          <select id="nt-target-year"></select>
+        </div>
+      </div>
+
+      <div class="nt-section-label">パーソナルデイを調べたい日付</div>
+      <div class="nt-form-row">
+        <div class="nt-field">
+          <label for="nt-day-year">年</label>
+          <select id="nt-day-year"></select>
+        </div>
+        <div class="nt-field">
+          <label for="nt-day-month">月</label>
+          <select id="nt-day-month"></select>
+        </div>
+        <div class="nt-field">
+          <label for="nt-day-day">日</label>
+          <select id="nt-day-day"></select>
+        </div>
+      </div>
+
+      <div class="nt-button-wrap">
+        <button type="button" class="nt-btn" id="nt-calc-btn">計算する</button>
+      </div>
+    </div>
+
+    <!-- ============== 結果表示エリア ============== -->
+    <div class="nt-results" id="nt-results">
+
+      <!-- A. パーソナルイヤー -->
+      <div class="nt-result-block">
+        <div class="nt-result-heading">パーソナル・イヤー・ナンバー</div>
+        <div class="nt-year-row" id="nt-year-row"></div>
+        <div class="nt-meaning-box" id="nt-year-meaning"></div>
+      </div>
+
+      <!-- B. パーソナルマンス -->
+      <div class="nt-result-block">
+        <div class="nt-result-heading">パーソナル・マンス・ナンバー</div>
+        <div class="nt-month-grid" id="nt-month-grid"></div>
+      </div>
+
+      <!-- C. パーソナルデイ -->
+      <div class="nt-result-block">
+        <div class="nt-result-heading">パーソナル・デイ・ナンバー</div>
+        <div class="nt-day-result">
+          <div class="nt-day-date" id="nt-day-date"></div>
+          <div class="nt-day-num" id="nt-day-num"></div>
+        </div>
+        <div class="nt-meaning-box" id="nt-day-meaning"></div>
+      </div>
+
+    </div>
+
+    <!-- ============== 数字の意味 一覧（常時表示） ============== -->
+    <div class="nt-meaning-list">
+      <div class="nt-meaning-list-title">数字の意味 一覧</div>
+      <div class="nt-meaning-grid" id="nt-meaning-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     ▼数字の意味の文言を変更したい場合はここ（MEANINGS）を編集してください
+  ============================================================ */
+  var MEANINGS = {
+    1: "始まり・自立・決断",
+    2: "調和・関係性・受容",
+    3: "表現・喜び・創造",
+    4: "安定・現実化・土台",
+    5: "変化・自由・体験",
+    6: "愛・育成・責任",
+    7: "探究・内省・精神性",
+    8: "豊かさ・力・循環",
+    9: "完了・手放し・統合",
+    11: "直感・ひらめき・霊性",
+    22: "大きな現実化・構築",
+    33: "無条件の愛・奉仕・統合"
+  };
+  var MASTER_NUMBERS = [11, 22, 33];
+
+  /* ============================================================
+     数値計算ロジック
+     ・数字の各桁をバラして合計する（digitSum）
+     ・合計が 11・22・33 になった場合はマスターナンバーとして残す
+     ・それ以外は1桁になるまで繰り返す（reduceNumber）
+  ============================================================ */
+
+  // 数字を1桁ずつバラして合計する（例：2026 → 2+0+2+6 = 10）
+  function digitSum(num) {
+    var s = String(Math.abs(num));
+    var sum = 0;
+    for (var i = 0; i < s.length; i++) {
+      sum += parseInt(s.charAt(i), 10);
+    }
+    return sum;
+  }
+
+  // 合計値を、1桁またはマスターナンバー（11/22/33）になるまで圧縮する
+  function reduceNumber(num) {
+    num = Math.abs(num);
+    while (num > 9) {
+      if (MASTER_NUMBERS.indexOf(num) !== -1) {
+        return num;
+      }
+      num = digitSum(num);
+    }
+    return num;
+  }
+
+  // パーソナルイヤー = 誕生月・誕生日・西暦の「すべての桁」をバラしてから合計
+  // 例：11月26日・2026年 → 1+1 + 2+6 + 2+0+2+6 = 20 → 2+0 = 2
+  // 例：11月26日・2028年 → 1+1 + 2+6 + 2+0+2+8 = 22 → マスターナンバーなのでそのまま22
+  function calcPersonalYear(birthMonth, birthDay, targetYear) {
+    var allDigitsSum = digitSum(birthMonth) + digitSum(birthDay) + digitSum(targetYear);
+    return reduceNumber(allDigitsSum);
+  }
+
+  // パーソナルマンス = パーソナルイヤーの数字 + 月（同じ考え方で桁をバラして合計）
+  function calcPersonalMonth(personalYearNum, month) {
+    var allDigitsSum = digitSum(personalYearNum) + digitSum(month);
+    return reduceNumber(allDigitsSum);
+  }
+
+  // パーソナルデイ = パーソナルマンスの数字 + 日（同じ考え方で桁をバラして合計）
+  function calcPersonalDay(personalMonthNum, day) {
+    var allDigitsSum = digitSum(personalMonthNum) + digitSum(day);
+    return reduceNumber(allDigitsSum);
+  }
+
+  /* ============================================================
+     セレクトボックスの初期化
+  ============================================================ */
+  function fillOptions(selectEl, start, end, selectedValue) {
+    selectEl.innerHTML = "";
+    for (var i = start; i <= end; i++) {
+      var opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = i;
+      if (i === selectedValue) {
+        opt.selected = true;
+      }
+      selectEl.appendChild(opt);
+    }
+  }
+
+  var todayDate = new Date();
+  var thisYear = todayDate.getFullYear();
+  var thisMonth = todayDate.getMonth() + 1;
+  var thisDay = todayDate.getDate();
+
+  var elBirthMonth = document.getElementById("nt-birth-month");
+  var elBirthDay = document.getElementById("nt-birth-day");
+  var elTargetYear = document.getElementById("nt-target-year");
+  var elDayYear = document.getElementById("nt-day-year");
+  var elDayMonth = document.getElementById("nt-day-month");
+  var elDayDay = document.getElementById("nt-day-day");
+
+  // 月日の初期化（誕生月日・パーソナルデイ用の月日とも 1〜31 / 1〜12）
+  fillOptions(elBirthMonth, 1, 12, thisMonth);
+  fillOptions(elBirthDay, 1, 31, thisDay);
+  fillOptions(elDayMonth, 1, 12, thisMonth);
+  fillOptions(elDayDay, 1, 31, thisDay);
+
+  // ▼年の選択範囲を変更したい場合はここ（西暦の幅）を編集してください
+  var YEAR_RANGE_PAST = 80;   // 今年より過去何年まで選べるか
+  var YEAR_RANGE_FUTURE = 15; // 今年より未来何年まで選べるか
+  fillOptions(elTargetYear, thisYear - YEAR_RANGE_PAST, thisYear + YEAR_RANGE_FUTURE, thisYear);
+  fillOptions(elDayYear, thisYear - YEAR_RANGE_PAST, thisYear + YEAR_RANGE_FUTURE, thisYear);
+
+  /* ============================================================
+     計算結果の描画
+  ============================================================ */
+  function meaningText(num) {
+    return num + "：" + (MEANINGS[num] || "");
+  }
+
+  function renderYearRow(birthMonth, birthDay, centerYear) {
+    var rowEl = document.getElementById("nt-year-row");
+    rowEl.innerHTML = "";
+
+    var centerNum = 0;
+
+    for (var offset = -5; offset <= 5; offset++) {
+      var y = centerYear + offset;
+      var num = calcPersonalYear(birthMonth, birthDay, y);
+      if (offset === 0) {
+        centerNum = num;
+      }
+
+      var chip = document.createElement("div");
+      chip.className = "nt-year-chip" + (offset === 0 ? " nt-center" : "");
+
+      var yearSpan = document.createElement("div");
+      yearSpan.className = "nt-chip-year";
+      yearSpan.textContent = y;
+
+      var numSpan = document.createElement("div");
+      numSpan.className = "nt-chip-num";
+      numSpan.textContent = num;
+
+      chip.appendChild(yearSpan);
+      chip.appendChild(numSpan);
+      rowEl.appendChild(chip);
+    }
+
+    document.getElementById("nt-year-meaning").innerHTML =
+      "<span class='nt-meaning-num'>" + centerYear + "年 → " + centerNum + "</span>" +
+      MEANINGS[centerNum];
+
+    return centerNum;
+  }
+
+  function renderMonthGrid(personalYearNum, targetYear) {
+    var gridEl = document.getElementById("nt-month-grid");
+    gridEl.innerHTML = "";
+
+    var monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+    for (var m = 1; m <= 12; m++) {
+      var num = calcPersonalMonth(personalYearNum, m);
+
+      var card = document.createElement("div");
+      card.className = "nt-month-card" + (m === thisMonth && targetYear === thisYear ? " nt-current" : "");
+
+      var label = document.createElement("div");
+      label.className = "nt-month-label";
+      label.textContent = monthNames[m - 1];
+
+      var numEl = document.createElement("div");
+      numEl.className = "nt-month-num";
+      numEl.textContent = num;
+
+      card.appendChild(label);
+      card.appendChild(numEl);
+      gridEl.appendChild(card);
+    }
+  }
+
+  function renderDayResult(birthMonth, birthDay, dYear, dMonth, dDay) {
+    var personalYearNum = calcPersonalYear(birthMonth, birthDay, dYear);
+    var personalMonthNum = calcPersonalMonth(personalYearNum, dMonth);
+    var personalDayNum = calcPersonalDay(personalMonthNum, dDay);
+
+    document.getElementById("nt-day-date").textContent =
+      dYear + "年" + dMonth + "月" + dDay + "日";
+    document.getElementById("nt-day-num").textContent = personalDayNum;
+
+    document.getElementById("nt-day-meaning").innerHTML =
+      "<span class='nt-meaning-num'>" + personalDayNum + "</span>" + MEANINGS[personalDayNum];
+  }
+
+  function renderMeaningList() {
+    var gridEl = document.getElementById("nt-meaning-grid");
+    gridEl.innerHTML = "";
+    var order = [1,2,3,4,5,6,7,8,9,11,22,33];
+    order.forEach(function (num) {
+      var item = document.createElement("div");
+      item.className = "nt-meaning-item" + (MASTER_NUMBERS.indexOf(num) !== -1 ? " nt-master" : "");
+      item.innerHTML = "<span class='nt-meaning-num'>" + num + "</span>：" + MEANINGS[num];
+      gridEl.appendChild(item);
+    });
+  }
+  renderMeaningList();
+
+  /* ============================================================
+     計算ボタンの処理
+  ============================================================ */
+  document.getElementById("nt-calc-btn").addEventListener("click", function () {
+    var birthMonth = parseInt(elBirthMonth.value, 10);
+    var birthDay = parseInt(elBirthDay.value, 10);
+    var targetYear = parseInt(elTargetYear.value, 10);
+
+    var dYear = parseInt(elDayYear.value, 10);
+    var dMonth = parseInt(elDayMonth.value, 10);
+    var dDay = parseInt(elDayDay.value, 10);
+
+    // A. パーソナルイヤー（中心年とその前後5年）
+    var centerYearNum = renderYearRow(birthMonth, birthDay, targetYear);
+
+    // B. パーソナルマンス（調べたい年の1〜12月）
+    renderMonthGrid(centerYearNum, targetYear);
+
+    // C. パーソナルデイ
+    renderDayResult(birthMonth, birthDay, dYear, dMonth, dDay);
+
+    // 結果エリアを表示
+    var resultsEl = document.getElementById("nt-results");
+    resultsEl.classList.add("is-visible");
+
+    // 結果エリアまでスクロール（モバイルで見やすくするため）
+    resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+})();
+</script>
+
+</body>
+</html>
+
